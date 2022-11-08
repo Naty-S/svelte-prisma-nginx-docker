@@ -1,0 +1,60 @@
+## Pull the Node.js Docker base image
+# nodejs version
+FROM node:16-alpine AS build
+
+## Set the Node environment to development to ensure all packages are installed
+ENV NODE_ENV development
+
+## Change our current working directory, where app its developed
+WORKDIR /app
+
+## Copy over `package.json` and lock files to optimize the build process
+COPY package*.json ./
+
+## Copy prisma files
+COPY prisma ./prisma/
+
+## COPY ENV variables
+COPY .env ./
+
+# COPY jsconfig.json file
+COPY jsconfig.json ./
+
+## Install dependencies
+RUN npm ci
+
+## Generate prisma client
+RUN npx prisma generate
+
+# Copy all local files into the image.
+COPY . .
+
+## build app
+RUN npm run build && npm prune --production
+
+## Set the Node environment to production
+ENV NODE_ENV production
+
+###
+# Only copy over the Node pieces we need
+# ~> Saves 35MB
+###
+FROM node:16-alpine AS deploy
+
+WORKDIR /app
+
+## 
+USER node:node
+
+## Copy everything from stage 0 (build) to the current working directory
+COPY --from=build --chown=node:node /app .
+
+## Copy everything from the project folder where the Dockerfile is located
+# into the working directory
+COPY . .
+
+## Expose port 3000 so it's accessible from outside of the Docker container
+EXPOSE 3000
+
+## Start app already built
+CMD ["node", "build"]

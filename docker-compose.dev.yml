@@ -1,0 +1,71 @@
+version: '3.9' ## see https://docs.docker.com/compose/
+
+services:
+  app:
+    container_name: app
+    image: sveltekit:alpine-multistage
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.dev
+      target: build
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+      - 24678:24678
+    restart: always
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+  ## Execute and run the Postgres database container on port 5432. 
+  # Access the database, set the environment
+  postgres:
+    container_name: postgres
+    image: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: svelte-prisma-nginx-docker
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  ## Have a visual representation of the Postgres database. 
+  # It has an interactive UI that lets you see the data that you manipulate. 
+  # Prisma automatically sets this database and table.
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    restart: unless-stopped
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+  ## Runs the Prisma API. 
+  # It will access the Postgres service, run the Prisma schema and 
+  # populate our data models to the database.
+  prisma:
+    container_name: prisma
+    stdin_open: true
+    build:
+      context: ./
+      dockerfile: ./Dockerfile.prod
+    depends_on:
+      - postgres
+    ports:
+      - "5050:5050"
+    restart: always
+
+
+volumes:
+  postgres-data:
+  pgadmin-data:
