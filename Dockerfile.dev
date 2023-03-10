@@ -1,36 +1,34 @@
-## Pull the Node.js Docker base image
-# nodejs version
-FROM node:16-alpine AS build
+## Pull the Node.js Docker base image from https://hub.docker.com/_/node
+FROM node:18-slim as dev
+
+
+## Set the Node environment to development to ensure all packages are installed
+ENV NODE_ENV development
 
 ## Change our current working directory, where app its developed
-WORKDIR /usr/src/app
+WORKDIR /usr/src/sveltekit-app
 
-## Copy over `package.json` and lock files to optimize the build process
+
+## Bundle APP files
+# Copy over `package.json` and lock files to optimize the build process
 COPY package*.json ./
 
-## Copy prisma files
-COPY prisma ./prisma/
 
-## COPY ENV variables
-COPY .env ./
+## Install dependencies
+RUN npm i
 
-# COPY jsconfig.json file
-COPY jsconfig.json ./
 
-## Install dependencies, npm install
-RUN npm ci
+## Copy all local files into the image.
+COPY . .
+
 
 ## Generate prisma client
 RUN npx prisma generate
 
-# Copy all local files into the image.
-COPY . .
 
-## Expose port 3000 so it's accessible from outside of the Docker container
+## Expose port 3000 to access from outside the container and SvelteKit app
 EXPOSE 3000
 
-## Expose port 3000 for the SvelteKit app and 24678 for Vite's HMR
-EXPOSE 24678
 
-## Run `npm run dev` and set the host to 0.0.0.0 so we can access the web app from outside
-CMD ["npm", "run", "dev", "--host", "0.0.0.0"]
+## Run `npm run dev`
+CMD ["npm", "run", "dev"]
