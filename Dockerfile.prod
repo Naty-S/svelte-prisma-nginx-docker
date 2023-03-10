@@ -1,0 +1,72 @@
+## Pull the Node.js Docker base image from https://hub.docker.com/_/node
+FROM node:18-slim AS build
+
+
+## Set the Node environment to development to ensure all packages are installed
+ENV NODE_ENV development
+
+
+## Change our current working directory, where app its developed
+WORKDIR /var/www/${NGINX_SERVER_NAME}
+
+
+## Copy over `package.json` and lock files to optimize the build process
+COPY package*.json ./
+
+
+## Install dependencies
+# RUN npm install pm2 -g
+RUN npm install
+
+# ENV NPM_CONFIG_LOGLEVEL warn
+# RUN npm install --production
+# RUN npm ci --prod
+
+
+# Copy all local files into the image.
+COPY . .
+
+
+## Generate prisma client
+RUN npx prisma generate
+
+
+## Set the Node environment to production
+ENV NODE_ENV production
+
+
+## build app
+RUN npm run build && npm prune --production
+
+
+##
+FROM node:18-slim AS deploy
+
+
+WORKDIR /var/www/${NGINX_SERVER_NAME}
+
+
+## Copy from stage 0 (build), only files and folders required to run the app.
+COPY --from=build /var/www/${NGINX_SERVER_NAME}/node_modules ./node_modules
+COPY --from=build /var/www/${NGINX_SERVER_NAME}/package*.json .
+COPY --from=build /var/www/${NGINX_SERVER_NAME}/build ./build
+COPY --from=build /var/www/${NGINX_SERVER_NAME}/static ./static
+
+
+## Expose port 3000 so it's accessible from outside of the Docker container
+EXPOSE 3000
+
+
+## Start app already built
+CMD ["node", "build"]
+# CMD ["pm2-runtime", "build/index.js"]
+
+# Error: Cannot find module '/var/www/pm2-runtime'
+# CMD ["pm2", "start", "-n", "sveltekit-app", "build/index.js", "--watch", "&&" \
+    # pm2 serve /build/index.js $PORT -s --name "appname"
+    # pm2 start npm --name "AppName" -- start
+    # , "pm2", "startup", "&&" \
+    # , "pm2", "save", "&&" \
+    # , "pm2", "monit", "&&" \
+    # sudo env PATH=$PATH:/usr/local/bin pm2 startup -u $USER
+    # ]
