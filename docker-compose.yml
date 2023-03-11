@@ -4,8 +4,8 @@ version: '3.9'
 services:
   sveltekit-app:
     container_name: sveltekit-app
-    # image: company/app-name:${APP_VERSION:-latest}-dev
-    restart: on-failure[:10]
+    image: sveltekit-app
+    restart: on-failure:10
     build:
       context: ./
       dockerfile: ./Dockerfile.prod
@@ -35,7 +35,9 @@ services:
     container_name: postgres
     image: postgres:14
     hostname: postgres
-    restart: on-failure[:10]
+    restart: on-failure:10
+    build:
+      context: ./db
     env_file:
       - .env
     ports:
@@ -45,14 +47,15 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
+      # DB_DUMP: ${DB_DUMP}
     volumes:
-      - ${PG_LOCAL_DATA}:${PG_DATA}
+      - pgdata:${PG_DATA}
 
 
   ##
   nginx:
     container_name: nginx
-    restart: on-failure[:10]
+    restart: on-failure:10
     env_file:
       - .env
     build:
@@ -63,3 +66,7 @@ services:
       - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
       - NGINX_ROOT=${NGINX_ROOT}
       - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+
+
+volumes:
+  pgdata:
