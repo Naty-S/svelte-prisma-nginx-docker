@@ -2,19 +2,20 @@
 version: '3.9'
 
 services:
-  sveltekit-app:
-    container_name: sveltekit-app
+  sveltekit-app-dev:
+    container_name: sveltekit-app-dev
+    image: sveltekit-app-dev
     build:
       context: ./
       dockerfile: ./Dockerfile.dev
     env_file:
       - .env
     links:
-      - postgres
-      - nginx
+      - postgres-dev
+      - nginx-dev
     depends_on:
-      - postgres
-      - nginx
+      - postgres-dev
+      - nginx-dev
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
@@ -23,16 +24,16 @@ services:
     volumes:
       - ./:/usr/src/sveltekit-app
       - /usr/src/sveltekit-app/node_modules
-      # - /usr/src/sveltekit-app/.svelte-kit
-      # - /usr/src/sveltekit-app/prisma
 
 
   ## Execute and run the Postgres database container on port 5432. 
   # Access the database, set the environment
-  postgres:
-    container_name: postgres
-    image: postgres:14
+  postgres-dev:
+    container_name: postgres-dev
+    image: postgres-dev:14
     hostname: postgres
+    build:
+      context: ./db
     env_file:
       - .env
     ports:
@@ -42,13 +43,14 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
+      # DB_DUMP: ${DB_DUMP}
     volumes:
-      - ${PG_LOCAL_DATA}:${PG_DATA}
+      - pgdata-dev:${PG_DATA}
 
 
   ##
-  nginx:
-    container_name: nginx
+  nginx-dev:
+    container_name: nginx-dev
     env_file:
       - .env
     build:
@@ -57,3 +59,7 @@ services:
       - ${NGINX_HTTP_PORT}:80
     environment:
       - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+
+
+volumes:
+  pgdata-dev:
