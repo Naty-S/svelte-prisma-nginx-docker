@@ -13,7 +13,7 @@ services:
       args:
         - SERVER_NAME=${SERVER_NAME}
     env_file:
-      - env
+      - .env
     links:
       - postgres
     depends_on:
@@ -42,7 +42,7 @@ services:
     build:
       context: ./db
     env_file:
-      - env
+      - .env
     ports:
       - ${PG_PORT}:5432
     environment:
@@ -60,7 +60,7 @@ services:
     container_name: nginx
     restart: on-failure:10
     env_file:
-      - env
+      - .env
     links:
       - sveltekit-app
     depends_on:

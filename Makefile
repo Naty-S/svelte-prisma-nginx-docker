@@ -52,7 +52,8 @@ dbinit: ## Enter interactive shell for postgres container for seed db data. Then
 dbinit-dev:
 	- $(COMPOSE_DEV) $(SH_CMD) -it postgres-dev sh
 
-reload-nginx-conf
+reload-nginx-conf:
+	- $(COMPOSE) stop nginx && $(COMPOSE) build nginx && $(COMPOSE) start nginx
 
 
 

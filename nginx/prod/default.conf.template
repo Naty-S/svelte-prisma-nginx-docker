@@ -1,6 +1,6 @@
-upstream ${DOCKER_APP_NAME} {
-  server localhost:3000;
-}
+#upstream ${DOCKER_APP_NAME} {
+#  server localhost:3000;
+#}
 
 # http
 server {
@@ -13,11 +13,11 @@ server {
   #
   root ${NGINX_ROOT};
 
-  location / {
-    try_files $uri @${DOCKER_APP_NAME};
-  }
+#  location / {
+#    try_files $uri @${DOCKER_APP_NAME};
+#  }
 
-  location @${DOCKER_APP_NAME} {
+  location / {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'Upgrade';
     proxy_set_header Host $host;
