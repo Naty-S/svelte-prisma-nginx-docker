@@ -52,6 +52,9 @@ dbinit: ## Enter interactive shell for postgres container for seed db data. Then
 dbinit-dev:
 	- $(COMPOSE_DEV) $(SH_CMD) -it postgres-dev sh
 
+reload-nginx-conf
+
+
 
 help: ## Show makefile helper
 	- @printf '\e[1;33m%-6s\e[m' "Makefile available commands"

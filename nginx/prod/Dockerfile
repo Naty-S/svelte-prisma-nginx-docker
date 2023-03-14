@@ -3,8 +3,6 @@ FROM nginx
 
 RUN rm /etc/nginx/conf.d/*
 
-# WORKDIR /usr/src/sveltekit-app/nginx/dev
-
 ## TODO: Creates .conf file from template with ENV variables and replace
 # ERR: ./default.conf.template not such file
 # RUN envsubst < ./default.conf.template > /etc/nginx/conf.d/default.conf

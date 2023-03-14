@@ -10,23 +10,26 @@ services:
       context: ./
       dockerfile: ./Dockerfile.prod
       target: deploy
+      args:
+        - SERVER_NAME=${SERVER_NAME}
     env_file:
-      - .env
+      - prod.env
     links:
       - postgres
-      - nginx
     depends_on:
       - postgres
-      - nginx
     environment:
-      - NODE_ENV=production
-      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
       - DATABASE_URL=${DATABASE_URL}
     ports:
       - 3000:3000
     volumes:
-      - ./:/usr/src/sveltekit-app
-      - /usr/src/sveltekit-app/node_modules
+      # Ensure hot-module reload works, don't have to restart our container to see changes.
+      - ./:/usr/var/${SERVER_NAME}
+      # To avoid copying over local Node modules to Docker
+      - docker_node_modules:/usr/var/${SERVER_NAME}/node_modules
+      # share build and static files with nginx
+      - app_build:/var/www/${SERVER_NAME}/build
+      - app_static:/var/www/${SERVER_NAME}/static
 
 
   ## Execute and run the Postgres database container on port 5432. 
@@ -39,7 +42,7 @@ services:
     build:
       context: ./db
     env_file:
-      - .env
+      - prod.env
     ports:
       - ${PG_PORT}:5432
     environment:
@@ -57,16 +60,27 @@ services:
     container_name: nginx
     restart: on-failure:10
     env_file:
-      - .env
+      - prod.env
+    links:
+      - sveltekit-app
+    depends_on:
+      - sveltekit-app
     build:
       context: ./nginx/prod
     ports:
       - ${NGINX_HTTP_PORT}:80
-    environment: # las usa el .conf
-      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
-      - NGINX_ROOT=${NGINX_ROOT}
-      - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+    # environment: # las usa el .conf
+    #   - SERVER_NAME=${SERVER_NAME}
+    #   - NGINX_ROOT=${NGINX_ROOT}
+    #   - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+    volumes:
+      - ./nginx/prod/default.conf.template:/etc/nginx/templates/default.conf.template
+      - app_build:/var/www/${SERVER_NAME}/build
+      - app_static:/var/www/${SERVER_NAME}/static
 
 
 volumes:
   pgdata:
+  docker_node_modules:
+  app_build:
+  app_static:
