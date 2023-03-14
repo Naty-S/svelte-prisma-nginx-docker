@@ -34,4 +34,12 @@ server {
     # (where app is listening, the one served by with pm2)
     proxy_pass ${NGINX_PROXY_PASS};
   }
+
+  # location ~* \.(jpg|jpeg|png|gif|ico|svg|css|js)$ {
+  # location @static {
+  #   proxy_pass http://sveltekit-app:3000/static;
+  #   alias http://sveltekit-app:3000/static;
+  #   root /var/www/${SERVER_NAME}/static
+  #   expires 30d;
+  # }
 }

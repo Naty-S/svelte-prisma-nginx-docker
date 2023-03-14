@@ -1,7 +1,7 @@
 FROM nginx
 
 
-RUN rm /etc/nginx/conf.d/*
+# RUN rm /etc/nginx/conf.d/*
 
 ## TODO: Creates .conf file from template with ENV variables and replace
 # ERR: ./default.conf.template not such file
@@ -9,7 +9,7 @@ RUN rm /etc/nginx/conf.d/*
 
 
 # NGINX config file
-COPY ./default.conf /etc/nginx/conf.d/
+# COPY ./default.conf /etc/nginx/conf.d/
 
 
 # Expose the listening port
