@@ -4,5 +4,6 @@ node_modules
 /.svelte-kit
 /package
 .env
-.env.*
+.env.prod
+.env.dev
 !.env.example
