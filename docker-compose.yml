@@ -69,7 +69,6 @@ services:
     ports:
       - ${NGINX_HTTP_PORT}:80
     environment: # las usa el .conf
-      - DOCKER_APP_NAME=${DOCKER_APP_NAME}
       - SERVER_NAME=${SERVER_NAME}
       - NGINX_ROOT=${NGINX_ROOT}
       - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}

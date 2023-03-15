@@ -61,8 +61,8 @@ dbinit-dev:
 reload-nginx-conf:
 	- $(COMPOSE) stop nginx && $(COMPOSE) build nginx && $(COMPOSE) start nginx
 
-# update:
-# 	- git pull && 
+update:
+	- git pull && restart
 
 # install:
 # 	- git clone '' &&
