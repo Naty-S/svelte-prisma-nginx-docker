@@ -2,11 +2,15 @@
 FROM node:18-slim as dev
 
 
+ARG DOCKER_APP_NAME
+
+
 ## Set the Node environment to development to ensure all packages are installed
 ENV NODE_ENV development
 
+
 ## Change our current working directory, where app its developed
-WORKDIR /usr/src/sveltekit-app
+WORKDIR /usr/src/${DOCKER_APP_NAME}
 
 
 ## Bundle APP files

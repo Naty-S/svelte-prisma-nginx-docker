@@ -50,6 +50,8 @@ services:
         window: 120s
     build:
       context: ./db
+      args:
+        - DB_DUMP: ${DB_DUMP}
     env_file:
       - .env
     ports:
@@ -59,7 +61,6 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
-      # DB_DUMP: ${DB_DUMP}
     volumes:
       - pgdata:${PG_DATA}
 
@@ -69,6 +70,7 @@ services:
     container_name: nginx
     image: nginx
     restart: on-failure:3
+    command: [ "nginx", "-g", "daemon off;" ]
     deploy:
       restart_policy:
         condition: always
@@ -80,7 +82,6 @@ services:
       - sveltekit-app
     depends_on:
       - sveltekit-app
-    command: [ "nginx", "-g", "daemon off;" ]
     ports:
       - ${NGINX_HTTP_PORT}:80
     environment: # las usa el .conf
