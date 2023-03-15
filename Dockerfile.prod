@@ -42,4 +42,4 @@ EXPOSE 3000
 
 
 ## Start app already built
-CMD ["pm2-runtime", "build"]
+CMD ["pm2-runtime", "build/index.js"]
