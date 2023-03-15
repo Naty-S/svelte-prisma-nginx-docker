@@ -61,6 +61,7 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
+      # DB_DUMP: ${DB_DUMP}
     volumes:
       - pgdata:${PG_DATA}
 
