@@ -10,7 +10,6 @@ services:
       restart_policy:
         condition: always
         delay: 5s
-        max_attempts: 3
         window: 120s
     build:
       context: ./
@@ -48,7 +47,6 @@ services:
       restart_policy:
         condition: always
         delay: 5s
-        max_attempts: 3
         window: 120s
     build:
       context: ./db
@@ -75,7 +73,6 @@ services:
       restart_policy:
         condition: always
         delay: 5s
-        max_attempts: 3
         window: 120s
     env_file:
       - .env
