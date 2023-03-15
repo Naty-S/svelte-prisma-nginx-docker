@@ -1,0 +1,45 @@
+## Pull the Node.js Docker base image from https://hub.docker.com/_/node
+FROM node:18-slim AS build
+
+
+ARG SERVER_NAME
+
+
+## Set the Node environment to development to ensure all packages are installed
+ENV NODE_ENV development
+
+
+## Change our current working directory, where app its developed
+WORKDIR /var/www/${SERVER_NAME}
+
+
+## Copy over `package.json` and lock files to optimize the build process
+COPY package*.json ./
+
+
+## Install dependencies
+RUN npm install pm2 -g
+RUN npm install
+
+# Copy all local files into the image.
+COPY . .
+
+
+## Generate prisma client
+RUN npx prisma generate
+
+
+## Set the Node environment to production
+ENV NODE_ENV production
+
+
+## build app
+RUN npm run build && npm prune --production
+
+
+## Expose port 3000 so it's accessible from outside of the Docker container
+EXPOSE 3000
+
+
+## Start app already built
+CMD ["pm2-runtime", "build/index.js"]

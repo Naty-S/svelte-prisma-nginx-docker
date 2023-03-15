@@ -1,0 +1,38 @@
+## Pull the Node.js Docker base image from https://hub.docker.com/_/node
+FROM node:18-slim as dev
+
+
+ARG DOCKER_APP_NAME
+
+
+## Set the Node environment to development to ensure all packages are installed
+ENV NODE_ENV development
+
+
+## Change our current working directory, where app its developed
+WORKDIR /usr/src/${DOCKER_APP_NAME}
+
+
+## Bundle APP files
+# Copy over `package.json` and lock files to optimize the build process
+COPY package*.json ./
+
+
+## Install dependencies
+RUN npm i
+
+
+## Copy all local files into the image.
+COPY . .
+
+
+## Generate prisma client
+RUN npx prisma generate
+
+
+## Expose port 3000 to access from outside the container and SvelteKit app
+EXPOSE 3000
+
+
+## Run `npm run dev`
+CMD ["npm", "run", "dev"]
