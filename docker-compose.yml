@@ -69,10 +69,10 @@ services:
       context: ./nginx/prod
     ports:
       - ${NGINX_HTTP_PORT}:80
-    # environment: # las usa el .conf
-    #   - SERVER_NAME=${SERVER_NAME}
-    #   - NGINX_ROOT=${NGINX_ROOT}
-    #   - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+    environment: # las usa el .conf
+      - SERVER_NAME=${SERVER_NAME}
+      - NGINX_ROOT=${NGINX_ROOT}
+      - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
     volumes:
       - ./nginx/prod/default.conf.template:/etc/nginx/templates/default.conf.template
       - app_build:/var/www/${SERVER_NAME}/build
