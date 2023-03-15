@@ -10,7 +10,7 @@ ENV NODE_ENV development
 
 
 ## Change our current working directory, where app its developed
-WORKDIR /usr/var/${SERVER_NAME}
+WORKDIR /var/www/${SERVER_NAME}
 
 
 ## Copy over `package.json` and lock files to optimize the build process
@@ -18,6 +18,7 @@ COPY package*.json ./
 
 
 ## Install dependencies
+RUN npm install pm2 -g
 RUN npm install
 
 # Copy all local files into the image.
@@ -36,26 +37,9 @@ ENV NODE_ENV production
 RUN npm run build && npm prune --production
 
 
-##
-FROM node:18-slim AS deploy
-
-
-ARG SERVER_NAME
-
-
-WORKDIR /var/www/${SERVER_NAME}
-
-
-## Copy from stage 0 (build), only files and folders required to run the app.
-COPY --from=build /usr/var/${SERVER_NAME}/node_modules ./node_modules
-COPY --from=build /usr/var/${SERVER_NAME}/package*.json .
-COPY --from=build /usr/var/${SERVER_NAME}/build ./build
-COPY --from=build /usr/var/${SERVER_NAME}/static ./static
-
-
 ## Expose port 3000 so it's accessible from outside of the Docker container
 EXPOSE 3000
 
 
 ## Start app already built
-CMD ["node", "build"]
+CMD ["pm2-runtime", "build/index.js"]

@@ -1,11 +1,16 @@
-APP_VERSION = $(shell jq -r ".version" package.json)
-ENV         = APP_VERSION=$(APP_VERSION)
+# APP_VERSION = $(shell jq -r ".version" package.json)
+# ENV         = APP_VERSION=$(APP_VERSION)
 COMPOSE     = docker compose -f docker-compose.yml
 COMPOSE_DEV = docker compose -f docker-compose.dev.yml
 UP_CMD      = up -d --build ${ARGS}
 DOWN_CMD    = down ${ARGS}
 BUILD_CMD   = build --force ${ARGS}
 SH_CMD      = exec ${ARGS}
+
+default_text = "\033[0m"
+yellow_text = "\e[1;33m%-6s\e[m"
+green_text  = "\e[1;32m%-6s\e[m"
+blue_text   = "\033[36m%-20s\033[0m %s\n"
 
 
 image: ## Build docker image with current version of package.json (image-dev available)
@@ -46,7 +51,8 @@ restart-dev:
 	- @echo "Restarting project v$(APP_VERSION) (dev)"
 	- $(COMPOSE_DEV) $(DOWN_CMD) && $(COMPOSE_DEV) $(UP_CMD)
 
-dbinit: ## Enter interactive shell for postgres container for seed db data. Then su - postgres, then gunzip -c ${PG_DUMP}.gz | psql ${PG_DB}
+dbinit: ## Enter interactive shell for postgres container for seed db data.
+## Then su - postgres, then gunzip -c ${PG_DUMP}.gz | psql ${PG_DB}
 	- $(COMPOSE) $(SH_CMD) -it postgres sh
 
 dbinit-dev:
@@ -55,15 +61,19 @@ dbinit-dev:
 reload-nginx-conf:
 	- $(COMPOSE) stop nginx && $(COMPOSE) build nginx && $(COMPOSE) start nginx
 
+# update:
+# 	- git pull && 
 
+# install:
+# 	- git clone '' &&
 
 help: ## Show makefile helper
-	- @printf '\e[1;33m%-6s\e[m' "Makefile available commands"
+	- @printf ${yellow_text} "Makefile available commands"
 	- @echo ''
-	- @grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
-	- @printf '\e[1;32m%-6s\e[m' "> Commands with -dev available use docker-compose.dev.yml as the configuration file."
+	- @grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf ${blue_text}, $$1, $$2}'
+	- @printf ${green_text} "> Commands with -dev available use docker-compose.dev.yml as the configuration file."
 	- @echo -e '\n'
-	- @printf '\e[1;33m%-6s\e[m' "Passing arguments"
+	- @printf ${yellow_text} "Passing arguments"
 	- @echo -e '\nmake image-dev ARGS="--no-cache"'
 	- @echo -e 'make run ARGS="-d"'
 	- @echo -e '\nenvironment: \n $(ENV)'
