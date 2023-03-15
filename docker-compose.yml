@@ -5,28 +5,35 @@ services:
   sveltekit-app:
     container_name: sveltekit-app
     image: sveltekit-app
-    restart: on-failure:10
+    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: always
+        delay: 5s
+        window: 120s
     build:
       context: ./
       dockerfile: ./Dockerfile.prod
-      target: deploy
+      args:
+        - SERVER_NAME=${SERVER_NAME}
     env_file:
       - .env
     links:
       - postgres
-      - nginx
     depends_on:
       - postgres
-      - nginx
     environment:
-      - NODE_ENV=production
-      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
       - DATABASE_URL=${DATABASE_URL}
     ports:
       - 3000:3000
     volumes:
-      - ./:/usr/src/sveltekit-app
-      - /usr/src/sveltekit-app/node_modules
+      # Ensure hot-module reload works, don't have to restart our container to see changes.
+      - ./:/var/www/${SERVER_NAME}
+      # To avoid copying over local Node modules to Docker
+      - docker_node_modules:/var/www/${SERVER_NAME}/node_modules
+      # share build and static files with nginx
+      - app_build:/var/www/${SERVER_NAME}/build
+      - app_static:/var/www/${SERVER_NAME}/static
 
 
   ## Execute and run the Postgres database container on port 5432. 
@@ -35,9 +42,16 @@ services:
     container_name: postgres
     image: postgres:14
     hostname: postgres
-    restart: on-failure:10
+    restart: on-failure:3
+    deploy:
+      restart_policy:
+        condition: always
+        delay: 5s
+        window: 120s
     build:
       context: ./db
+      args:
+        - DB_DUMP: ${DB_DUMP}
     env_file:
       - .env
     ports:
@@ -55,18 +69,34 @@ services:
   ##
   nginx:
     container_name: nginx
-    restart: on-failure:10
+    image: nginx
+    restart: on-failure:3
+    command: [ "nginx", "-g", "daemon off;" ]
+    deploy:
+      restart_policy:
+        condition: always
+        delay: 5s
+        window: 120s
     env_file:
       - .env
-    build:
-      context: ./nginx/prod
+    links:
+      - sveltekit-app
+    depends_on:
+      - sveltekit-app
     ports:
       - ${NGINX_HTTP_PORT}:80
     environment: # las usa el .conf
-      - NGINX_SERVER_NAME=${NGINX_SERVER_NAME}
+      - SERVER_NAME=${SERVER_NAME}
       - NGINX_ROOT=${NGINX_ROOT}
       - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+    volumes:
+      - ./nginx/prod/default.conf.template:/etc/nginx/templates/default.conf.template
+      - app_build:/var/www/${SERVER_NAME}/build
+      - app_static:/var/www/${SERVER_NAME}/static
 
 
 volumes:
   pgdata:
+  docker_node_modules:
+  app_build:
+  app_static:

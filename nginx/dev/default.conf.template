@@ -3,22 +3,16 @@ server {
   listen 80;
   listen [::]:80;
 
-	proxy_set_header Upgrade $http_upgrade;
-	proxy_set_header Connection 'Upgrade';
-	proxy_set_header Host $host;
-
   location / {
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'Upgrade';
+    proxy_set_header Host $host;
 
-    # First attempt to serve request as file, then
-    # as directory, then fall back to displaying a 404.
-    try_files $uri $uri/ =404;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
 
-    # Redirects from port 80 to 3000
-    # (where app is listening, the one served by with pm2)
+    # Redirects from port 80 to 3000 (where app is listening)
     proxy_pass ${NGINX_PROXY_PASS};
   }
 }

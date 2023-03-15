@@ -8,22 +8,24 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile.dev
+      args:
+        - DOCKER_APP_NAME=${DOCKER_APP_NAME}
     env_file:
       - .env
     links:
       - postgres-dev
-      - nginx-dev
     depends_on:
       - postgres-dev
-      - nginx-dev
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
     ports:
       - 3000:3000
     volumes:
-      - ./:/usr/src/sveltekit-app
-      - /usr/src/sveltekit-app/node_modules
+      # Ensure hot-module reload works, don't have to restart our container to see changes.
+      - ./:/usr/var/${DOCKER_APP_NAME}
+      # To avoid copying over local Node modules to Docker
+      - docker_node_modules-dev:/usr/var/${DOCKER_APP_NAME}/node_modules
 
 
   ## Execute and run the Postgres database container on port 5432. 
@@ -34,6 +36,8 @@ services:
     hostname: postgres
     build:
       context: ./db
+      args:
+        - DB_DUMP: ${DB_DUMP}
     env_file:
       - .env
     ports:
@@ -51,15 +55,18 @@ services:
   ##
   nginx-dev:
     container_name: nginx-dev
+    image: nginx
+    command: [ "nginx", "-g", "daemon off;" ]
     env_file:
       - .env
-    build:
-      context: ./nginx/dev
     ports:
       - ${NGINX_HTTP_PORT}:80
-    environment:
+    environment: # las usa el .conf
       - NGINX_PROXY_PASS=${NGINX_PROXY_PASS}
+    volumes:
+      - ./nginx/prod/default.conf.template:/etc/nginx/templates/default.conf.template
 
 
 volumes:
   pgdata-dev:
+  docker_node_modules-dev:
