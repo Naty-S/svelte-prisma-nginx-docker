@@ -15,6 +15,7 @@ export async function load({ url }) {
       status: 200
     };
   } else if (url.pathname.includes("login")) {
+
     return {
       status: 302,
       redirect: "https://secure.dst.usb.ve/login?service=http%3A%2F%2Flocalhost:3000%2Flogin"
@@ -31,7 +32,7 @@ export async function load({ url }) {
 export const actions = {
   default: async ({ request }) => {
     
-    console.log("login server actions: default")
+    console.log("login actions: default")
 
     // throw redirect(307, '/');
   }
