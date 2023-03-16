@@ -12,7 +12,7 @@
   $: cas_login = Boolean(cas_ticket);
 
 
-  const login = async function () {
+/*   const login = async function () {
   
     // https://www.google.com/url?q=https%3A%2F%2Fsecure.dst.usb.ve%2Flogin%3Fservice%3Dhttps%253A%252F%252Fwww.sinai.did.usb.ve%252Fsinai%252Fsecurity%252Fscriptcas.php&sa=D&sntz=1&usg=AOvVaw2Z-dKnxEj98V_07GVuGIeW
     const dst_verify = `https://secure.dst.usb.ve/proxyValidate?service=http%3A%2F%2Flocalhost:3000%2Flogin&ticket=${cas_ticket}`;
@@ -66,7 +66,7 @@
     //   const { message } = await res.clone().json();
     //   console.log(message)
     // };
-  };
+  }; */
 </script>
 
 <h1>Welcome to SvelteKit</h1>
