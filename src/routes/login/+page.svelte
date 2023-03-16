@@ -1,11 +1,9 @@
-<!-- TODO:  -->
 <script lang="ts">
 
 	// /** @type {import('./$types').PageData} */
 	// export let data;
   
   import { goto } from "$app/navigation";
-  import { dev } from "$app/env";
   import { page } from "$app/stores";
   import * as api from "$lib/api";
 
@@ -13,17 +11,6 @@
   $: cas_ticket = $page.url.searchParams.get("ticket");
   $: cas_login = Boolean(cas_ticket);
 
-  $: if ($page.url.searchParams.has("ticket")) {
-
-    const cas_ticket = $page.url.searchParams.get("ticket");
-
-  } else if ($page.url.pathname.includes("login")) {
-
-    goto("https://secure.dst.usb.ve/login?service=http%3A%2F%2Flocalhost:3000%2Flogin")
-    // redirect: "https://secure.dst.usb.ve/login?service=http%3A%2F%2Fwww.sinai.did.usb.ve%2Flogin"
-  } else {
-
-  };
 
   const login = async function () {
   
@@ -82,11 +69,13 @@
   };
 </script>
 
+<h1>Welcome to SvelteKit</h1>
+
 {#if cas_login}  
   <button
     id="cas_login"
     type="submit"
-    on:click|preventDefault={() => {console.log($page.url.pathname); login()}}
+    on:click|preventDefault={() => {console.log($page.url.pathname)}}
   >
     verify login
   </button>
