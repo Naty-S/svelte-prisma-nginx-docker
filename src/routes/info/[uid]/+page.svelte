@@ -10,7 +10,7 @@
 
   
   /** @type {import('./$types').PageData} */
-  export let data;
+  export let data: any;
 
   const initialValues = init(data.info);
   const onSubmit = submit($page.params.uid, $page.url.pathname);

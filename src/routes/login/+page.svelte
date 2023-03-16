@@ -1,8 +1,8 @@
 <!-- TODO:  -->
 <script lang="ts">
 
-	/** @type {import('./$types').PageData} */
-	export let data;
+	// /** @type {import('./$types').PageData} */
+	// export let data;
   
   import { goto } from "$app/navigation";
   import { dev } from "$app/env";
@@ -82,9 +82,7 @@
   };
 </script>
 
-{#if cas_login}
-  {data}
-  
+{#if cas_login}  
   <button
     id="cas_login"
     type="submit"
