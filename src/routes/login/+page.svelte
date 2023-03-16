@@ -13,6 +13,18 @@
   $: cas_ticket = $page.url.searchParams.get("ticket");
   $: cas_login = Boolean(cas_ticket);
 
+  $: if ($page.url.searchParams.has("ticket")) {
+
+    const cas_ticket = $page.url.searchParams.get("ticket");
+
+  } else if ($page.url.pathname.includes("login")) {
+
+    goto("https://secure.dst.usb.ve/login?service=http%3A%2F%2Flocalhost:3000%2Flogin")
+    // redirect: "https://secure.dst.usb.ve/login?service=http%3A%2F%2Fwww.sinai.did.usb.ve%2Flogin"
+  } else {
+
+  };
+
   const login = async function () {
   
     // https://www.google.com/url?q=https%3A%2F%2Fsecure.dst.usb.ve%2Flogin%3Fservice%3Dhttps%253A%252F%252Fwww.sinai.did.usb.ve%252Fsinai%252Fsecurity%252Fscriptcas.php&sa=D&sntz=1&usg=AOvVaw2Z-dKnxEj98V_07GVuGIeW
