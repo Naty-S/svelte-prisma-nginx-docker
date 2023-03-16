@@ -1,13 +1,16 @@
+import type { Load } from "@sveltejs/kit";
 import { redirect } from '@sveltejs/kit';
 import { redir } from "$lib/session";
 
 import * as api from '$lib/api';
 
 
-// /** @type {import('./$types').PageLoad} */
-// export async function load({ url }) {
+// import type { PageLoad, PageServerLoad } from './$types';
 
-// }
+/** @type {import('./$types').PageServerLoad} */
+export const load: Load = async ({ url }) => {
+  api.get("/api/login");
+}
 
 // /** @type {import('./$types').Actions} */
 // export const actions = {
