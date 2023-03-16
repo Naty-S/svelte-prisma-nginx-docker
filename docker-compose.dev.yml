@@ -36,8 +36,8 @@ services:
     hostname: postgres
     build:
       context: ./db
-      args:
-        - DB_DUMP: ${DB_DUMP}
+      # args:
+      #   - DB_DUMP: ${DB_DUMP}
     env_file:
       - .env
     ports:
