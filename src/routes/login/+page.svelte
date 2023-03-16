@@ -74,7 +74,6 @@
 {#if cas_login}  
   <button
     id="cas_login"
-    type="submit"
     on:click|preventDefault={() => {console.log($page.url.pathname)}}
   >
     verify login
