@@ -9,9 +9,17 @@ import * as api from '$lib/api';
 
 /** @type {import('./$types').PageServerLoad} */
 export const load: Load = async ({ url }) => {
-  api.get("/api/login");
+  
+  const res = await api.get("/api/login");
 
-  return { url: url.pathname }
+  if (res.ok) {
+    return { url: url.pathname }
+  }
+
+  const { message } = await res.json();
+  return {
+    error: new Error(message)
+  };
 }
 
 // /** @type {import('./$types').Actions} */
