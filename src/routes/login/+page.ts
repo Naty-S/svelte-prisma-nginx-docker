@@ -4,7 +4,7 @@ import { redir } from "$lib/session";
 import * as api from '$lib/api';
 
 
-/** @type {import('./$types').PageServerLoad} */
+/** @type {import('./$types').PageLoad} */
 export async function load({ url }) {
 
   if (url.searchParams.has("ticket")) {

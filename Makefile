@@ -69,18 +69,18 @@ sh-dev:
 	- $(ENV) $(COMPOSE_DEV) $(SH_CMD)
 
 
-exec:
+exec $1:
 	- $(ENV) $(COMPOSE) exec $1 $(ARGS)
 
-exec-dev:
+exec-dev $1:
 	- $(ENV) $(COMPOSE_DEV) exec $1 $(ARGS)
 
 
-reload: ## Stop, build and start single container (reload-dev available). Usage: make reload <container name>
+reload $1: ## Stop, build and start single container (reload-dev available). Usage: make reload <container name>
 	- @echo "Reloading container $1 - v$(APP_VERSION) (prod)"
 	- $(ENV) $(COMPOSE) stop $1 && $(COMPOSE) build $1 && $(COMPOSE) start $1
 
-reload-dev:
+reload-dev $1:
 	- @echo "Reloading container $1 - v$(APP_VERSION) (dev)"
 	- $(ENV) $(COMPOSE) stop $1 && $(COMPOSE) build $1 && $(COMPOSE) start $1
 
