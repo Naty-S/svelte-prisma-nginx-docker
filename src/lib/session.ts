@@ -3,7 +3,7 @@ import type { Load } from "@sveltejs/kit";
 import * as api from "$lib/api";
 
 
-export const redirect: Load = async function ({ url }) {
+export const redir: Load = async function ({ url }) {
 
   if (url.searchParams.has("ticket")) {
 

@@ -1,10 +1,4 @@
 <!-- TODO:  -->
-<script lang="ts" context="module">
-  import { redirect } from "$lib/session";
-  
-  export const load = redirect;
-
-</script>
 <script lang="ts">
 
 	/** @type {import('./$types').PageData} */
@@ -15,7 +9,7 @@
   import { page } from "$app/stores";
   import * as api from "$lib/api";
 
-  
+
   $: cas_ticket = $page.url.searchParams.get("ticket");
   $: cas_login = Boolean(cas_ticket);
 
@@ -81,6 +75,7 @@
   
   <button
     id="cas_login"
+    type="submit"
     on:click|preventDefault={() => {console.log($page.url.pathname); login()}}
   >
     verify login

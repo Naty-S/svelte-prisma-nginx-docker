@@ -1,11 +1,12 @@
-import type { Handle } from "@sveltejs/kit";
+// import type { Handle } from "@sveltejs/kit";
 
 // import * as cookie from "cookie";
 
 
-export const handle: Handle = async function ({ event, resolve }) {
+/** @type {import('@sveltejs/kit').Handle} */
+export const handle = async function ({ event, resolve }) {
 
-  const response = await resolve(event);
+  // const response = await resolve(event);
   // const cookies = cookie.parse(event.request.headers.get("cookie") || '');
   // const jwt = cookies.jwt && Buffer.from(cookies.jwt, "base64").toString("utf-8");
 
@@ -28,7 +29,8 @@ export const handle: Handle = async function ({ event, resolve }) {
   // response.headers.append('Access-Control-Allow-Origin', `*`);
   // }
 
-  return response;
+  // return response;
+  return resolve(event);
 };
 
 // export const getSession: GetSession = function ({ locals }) {
