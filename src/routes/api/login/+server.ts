@@ -5,6 +5,8 @@ import { handle_error, prisma } from "$api/_api";
 
 export const GET: RequestHandler = async function ({ params }) {
 
+  console.log("get login")
+
   let status = 500;
   let body = null;
 

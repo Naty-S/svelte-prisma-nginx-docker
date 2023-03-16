@@ -10,6 +10,7 @@ import * as api from '$lib/api';
 /** @type {import('./$types').PageServerLoad} */
 export const load: Load = async ({ url }) => {
   
+  console.log("load")
   const res = await api.get("/api/login");
 
   if (res.ok) {

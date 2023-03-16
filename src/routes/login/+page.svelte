@@ -11,6 +11,7 @@
   $: cas_ticket = $page.url.searchParams.get("ticket");
   $: cas_login = Boolean(cas_ticket);
 
+  console.log("login page")
 
   // const login = async function () {
   
@@ -69,7 +70,7 @@
   // };
 </script>
 
-<h1>Welcome to SvelteKit</h1>
+<h1>LOGIN</h1>
 
 {#if cas_login}  
   <button
