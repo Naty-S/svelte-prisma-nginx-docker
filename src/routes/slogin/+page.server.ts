@@ -11,7 +11,7 @@ import * as api from '$lib/api';
 export const load: Load = async ({ url }) => {
   
   console.log("load")
-  const res = await api.get("/api/login");
+  const res = await api.get("/api/slogin");
 
   if (res.ok) {
     return { url: url.pathname }
