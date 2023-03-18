@@ -37,7 +37,7 @@ services:
     build:
       context: ./db
       args:
-        - DB_DUMP: ${DB_DUMP}
+        - DB_DUMP=${DB_DUMP}
     env_file:
       - .env
     ports:
