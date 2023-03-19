@@ -48,10 +48,6 @@ services:
         condition: always
         delay: 5s
         window: 120s
-    build:
-      context: ./db
-      args:
-        - DB_DUMP=${DB_DUMP}
     env_file:
       - .env
     ports:
@@ -61,9 +57,9 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
-      # DB_DUMP: ${DB_DUMP}
     volumes:
       - pgdata:${PG_DATA}
+      - ./prisma/db/spnd.gz:/var/lib/postgresql/spnd.gz
 
 
   ##

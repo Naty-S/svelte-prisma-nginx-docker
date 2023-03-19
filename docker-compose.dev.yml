@@ -13,9 +13,9 @@ services:
     env_file:
       - .env
     links:
-      - postgres-dev
+      - postgres
     depends_on:
-      - postgres-dev
+      - postgres
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
@@ -30,14 +30,10 @@ services:
 
   ## Execute and run the Postgres database container on port 5432. 
   # Access the database, set the environment
-  postgres-dev:
-    container_name: postgres-dev
-    image: postgres-dev:14
+  postgres:
+    container_name: postgres
+    image: postgres:14
     hostname: postgres
-    build:
-      context: ./db
-      args:
-        - DB_DUMP=${DB_DUMP}
     env_file:
       - .env
     ports:
@@ -47,14 +43,14 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
       PGDATA: ${PG_DATA}
-      # DB_DUMP: ${DB_DUMP}
     volumes:
-      - pgdata-dev:${PG_DATA}
+      - pgdata:${PG_DATA}
+      - ./prisma/db/${DB_DUMP}:/var/lib/postgresql/${DB_DUMP}
 
 
   ##
-  nginx-dev:
-    container_name: nginx-dev
+  nginx:
+    container_name: nginx
     image: nginx
     command: [ "nginx", "-g", "daemon off;" ]
     env_file:
@@ -72,5 +68,5 @@ services:
 
 
 volumes:
-  pgdata-dev:
+  pgdata:
   docker_node_modules-dev:
