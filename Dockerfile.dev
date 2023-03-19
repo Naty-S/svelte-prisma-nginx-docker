@@ -20,6 +20,7 @@ COPY package*.json ./
 
 ## Install dependencies
 RUN npm i
+RUN npm fund
 
 
 ## Copy all local files into the image.

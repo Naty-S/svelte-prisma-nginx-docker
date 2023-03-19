@@ -18,8 +18,9 @@ COPY package*.json ./
 
 
 ## Install dependencies
-RUN npm install pm2 -g
-RUN npm install
+RUN npm i pm2 -g
+RUN npm i
+RUN npm fund
 
 # Copy all local files into the image.
 COPY . .
@@ -34,7 +35,7 @@ ENV NODE_ENV production
 
 
 ## build app
-RUN npm run build && npm prune --production
+RUN npm run build && npm prune --omit=dev
 
 
 ## Expose port 3000 so it's accessible from outside of the Docker container
